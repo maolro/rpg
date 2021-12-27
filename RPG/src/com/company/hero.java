@@ -16,6 +16,7 @@ public class hero extends character{
         defPos = false;
         aim = false;
         aP = 0;
+        id = 'H';
         atkBonus = 4;
         dmgBonus = 3;
     }

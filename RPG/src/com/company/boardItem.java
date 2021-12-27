@@ -1,5 +1,6 @@
 package com.company;
 
 public class boardItem {
-    int[] pos;
+    point currentPos;
+    char id;
 }

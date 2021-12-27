@@ -17,6 +17,7 @@ public class board{
     public int getLength(){
         return b.length;
     }
+
     public void printBoard(){
         System.out.print("@ ");
         for(int i=0;i<b.length;i++){
@@ -25,6 +26,7 @@ public class board{
         System.out.println("");
         for (int i = 0; i < b.length; i++){
             System.out.print((i+1)+" ");
+
             for (int j = 0; j < b.length; j++){
                 System.out.print(b[i][j] + " ");
             }
