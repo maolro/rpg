@@ -1,5 +1,7 @@
 package com.company;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class board{
@@ -62,7 +64,7 @@ public class board{
         boolean res = false;
         for(int i=0;i<b.length && !res; i++){
             for(int j=0;j<b.length && !res;j++){
-                if(b[i][j].id == c)
+                if(b[i][j] != null && b[i][j].id == c)
                     res = true;
             }
         }
@@ -81,7 +83,7 @@ public class board{
                             && pos.distanceTo(foundPos)<nearestDistance){
 
                         nearestTarget = getAt(foundPos);
-                        nearestDistance = nearestPos.distanceTo(foundPos);
+                        nearestDistance = findPosOfItem(nearestTarget).distanceTo(foundPos);
                     }
                 }
             }
@@ -119,5 +121,15 @@ public class board{
             }
         }
         throw new RuntimeException("The chosen character does not exist in the board");
+    }
+    List<boardItem> findItemsByID(char id){
+        List<boardItem> itemList = new ArrayList<>();
+        for(int i=0;i<b.length;i++){
+            for(int j=0;j<b.length;j++){
+                if(b[i][j] != null && b[i][j].id == id)
+                    itemList.add(b[i][j]);
+            }
+        }
+        return itemList;
     }
 }

@@ -11,10 +11,11 @@ public class hero extends character{
     public hero(board selBoard){
         b = selBoard;
         hp = 10;
+        def = 4;
         defPos = false;
         aim = false;
         aP = 0;
-        id = 'H';
+        id = 'P';
         atkBonus = 4;
         dmgBonus = 3;
     }

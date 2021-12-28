@@ -17,13 +17,18 @@ public class Main {
                     {'+', '+', '+', '+', '+', '+', '+', '+', '+'}};
 
             board b = new board(r1);
-            b.printBoard();
-            hero h = new hero(b);
-            enemy e = new enemy(b);
+            List<boardItem> enemyList = b.findItemsByID('Z');
+            List<boardItem> heroList = b.findItemsByID('P');
+            hero h = (hero) heroList.get(0);
 
-            while (h.hp>0 && e.hp > 0) {
+            while (h.hp > 0 && enemyList.size()>0) {
                 h.turn();
-                e.enemyTurn();
+                for (boardItem enemies : enemyList){
+                    enemy e = (enemy) enemies;
+                    if(e.hp > 0)
+                        e.enemyTurn();
+                    else
+                        enemyList.remove(enemies);              }
             }
             if(h.hp>0)
                 System.out.println("You are victorious");

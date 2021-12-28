@@ -3,20 +3,16 @@ package com.company;
 
 class enemy extends character {
 
-    char id;
     board b;
-    hero player;
 
     public enemy(board selBoard){
-        id = 'Z';
         b = selBoard;
-        player = (hero) b.findNearestTarget(b.findPosOfItem(this), 'P');
         hp = 10;
         def = 2;
         atkBonus = 4;
         dmgBonus = 3;
         aP = 0;
-
+        id = 'Z';
     }
 
     public void enemyTurn(){
@@ -28,10 +24,10 @@ class enemy extends character {
             b.setAt(b.findPosOfItem(this), null);
     }
     void actions(){
-        point heroPos = b.findPosOfItem(player);
+        boardItem player = b.findNearestTarget(b.findPosOfItem(this), 'P');
         point currentPos = b.findPosOfItem(this);
 
-        if(currentPos.distanceTo(heroPos)>1){
+        if(currentPos.distanceTo(b.findPosOfItem(player))>1){
             b.setAt(currentPos, null);
             currentPos = b.nearestPosToTarget(currentPos, 3, player.id);
             b.setAt(currentPos, this);
@@ -45,6 +41,8 @@ class enemy extends character {
             actions();
     }
     void attack(){
+        hero player = (hero) b.findNearestTarget(b.findPosOfItem(this), 'P');
+
         if(b.diceRoll(20)+atkBonus > player.defRoll()) {
             int damage = b.diceRoll(6) + dmgBonus;
             if(damage > player.def)
