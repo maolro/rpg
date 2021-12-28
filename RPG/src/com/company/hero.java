@@ -5,13 +5,11 @@ import java.util.Scanner;
 
 public class hero extends character{
     board b;
-    enemy z;
     boolean defPos;
     boolean aim;
 
     public hero(board selBoard){
         b = selBoard;
-        currentPos = b.findPosOfChar('P');
         hp = 10;
         defPos = false;
         aim = false;
@@ -26,10 +24,15 @@ public class hero extends character{
         String movedPos = s.next();
         point pos = new point(Integer.parseInt(movedPos.substring(1))-1,
                 (Character.toUpperCase(movedPos.charAt(0)) - 'A'));
-        if((int) (currentPos.distanceTo(pos)/3) <= aP){
-            if(b.getAt(pos)=='.'){
-                b.setAt(pos,'P');
-                b.setAt(currentPos, '.');
+        point currentPos = b.findPosOfItem(this);
+
+        if((currentPos.distanceTo(pos)/3) <= aP){
+            if(b.getAt(pos)==null){
+                b.setAt(pos,this);
+                b.setAt(currentPos, null);
+                if(currentPos.distanceTo(pos)>3)
+                    aP = aP - currentPos.distanceTo(pos)/3;
+                currentPos = pos;
             }
             else{
                 System.out.println("position unavailable. Choose again");
@@ -50,18 +53,20 @@ public class hero extends character{
             damageTotal = damageTotal+b.diceRoll(6);
         return damageTotal;
     }
-    void attack(char target){
-        if(b.containsChar(target)){
-            if(currentPos.distanceTo(z.currentPos)==1){
+    void attack(character target){
+        point currentPos = b.findPosOfItem(this);
+
+        if(b.containsChar(target.id)){
+            if(currentPos.distanceTo(b.findPosOfItem(target))==1){
                 aP = aP-2;
                 int roll = b.diceRoll(20);
-                if(roll+atkBonus>b.diceRoll(20)+z.atkBonus) {
+                if(roll+atkBonus>b.diceRoll(20)+target.atkBonus) {
                     int damage = damageCalc(roll);
-                    if(damage > z.def)
-                        damage = damage - z.def;
+                    if(damage > target.def)
+                        damage = damage - target.def;
                     else
                         damage = 0;
-                    z.hp = z.hp - damage;
+                    target.hp = target.hp - damage;
                     System.out.println("Your attack hits and deals " + damage + " damage");
                 }
                 else
@@ -85,20 +90,18 @@ public class hero extends character{
         int chosenAction = s.nextInt();
         if(chosenAction==1){
             move();
-            point newPos = b.findPosOfChar('P');
-            moveCount = moveCount + currentPos.distanceTo(newPos);
-            currentPos = b.findPosOfChar('P');
             b.printBoard();
-            if(moveCount>3){
-                aP = aP - moveCount/3;
-                moveCount = 0;
-            }
+
         }
         else if(chosenAction==2){
             if(aP>=2){
                 System.out.println("Choose your target");
-                char target = s.next().charAt(0);
-                attack(target);
+                char targetID = s.next().charAt(0);
+                boardItem target = b.findNearestTarget(b.findPosOfItem(this), targetID);
+                if(target instanceof character)
+                    attack((character) target);
+                else
+                    System.out.println("The chosen target is invalid");
             }
             else
                 System.out.println("You do not have enough action points");
@@ -133,8 +136,7 @@ public class hero extends character{
             defRoll = defRoll + b.diceRoll(6);
         return defRoll;
     }
-    public void turn(enemy e){
-        z = e;
+    public void turn(){
         defPos = false;
         aim = false;
         aP = 3;

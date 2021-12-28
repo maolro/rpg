@@ -7,49 +7,34 @@ class enemy extends character {
     board b;
     hero player;
 
-    public enemy(board selBoard, hero h){
+    public enemy(board selBoard){
         id = 'Z';
         b = selBoard;
-        player = h;
+        player = (hero) b.findNearestTarget(b.findPosOfItem(this), 'P');
         hp = 10;
         def = 2;
         atkBonus = 4;
         dmgBonus = 3;
         aP = 0;
-        currentPos = b.findPosOfChar(id);
 
     }
-    point nearestPosToTarget(int range){
-        point targetPos = player.currentPos;
-        point nearestPos = new point(currentPos.getX(), currentPos.getY());
-        int nearestDistance = currentPos.distanceTo(targetPos);
-        for(int i=0;i<b.getLength();i++){
-            for(int j=0;j<b.getLength();j++) {
-                point pos = new point(i,j);
-                if (currentPos.distanceTo(pos) <= 3 && b.getAt(pos) == '.'
-                        && nearestDistance>pos.distanceTo(targetPos)) {
-                    nearestPos = pos;
-                    nearestDistance = nearestPos.distanceTo(targetPos);
-                }
-            }
-        }
-        return nearestPos;
-    }
+
     public void enemyTurn(){
         if(hp>0) {
             aP = 2;
             actions();
         }
         else
-            b.setAt(currentPos, '.');
+            b.setAt(b.findPosOfItem(this), null);
     }
     void actions(){
-        point heroPos = b.findPosOfChar('P');
-        currentPos = b.findPosOfChar('Z');
+        point heroPos = b.findPosOfItem(player);
+        point currentPos = b.findPosOfItem(this);
+
         if(currentPos.distanceTo(heroPos)>1){
-            b.setAt(currentPos, '.');
-            currentPos = nearestPosToTarget(3);
-            b.setAt(currentPos, 'Z');
+            b.setAt(currentPos, null);
+            currentPos = b.nearestPosToTarget(currentPos, 3, player.id);
+            b.setAt(currentPos, this);
             aP--;
         }
         else{
