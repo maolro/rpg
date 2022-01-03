@@ -58,7 +58,7 @@ public class hero extends character{
         point currentPos = b.findPosOfItem(this);
 
         if(b.containsChar(target.id)){
-            if(currentPos.distanceTo(b.findPosOfItem(target))==1){
+            if(currentPos.distanceTo(b.findPosOfItem(b.findNearestTarget(currentPos, target.id)))==1){
                 aP = aP-2;
                 int roll = b.diceRoll(20);
                 if(roll+atkBonus>b.diceRoll(20)+target.atkBonus) {
@@ -69,6 +69,10 @@ public class hero extends character{
                         damage = 0;
                     target.hp = target.hp - damage;
                     System.out.println("Your attack hits and deals " + damage + " damage");
+                    if(target.hp <= 0){
+                        b.setAt(b.findPosOfItem(target), null);
+                        System.out.println("Your target is dead");
+                    }
                 }
                 else
                     System.out.println("Your attack misses your target");
