@@ -28,8 +28,9 @@ class enemy extends character {
         point currentPos = b.findPosOfItem(this);
 
         if(currentPos.distanceTo(b.findPosOfItem(player))>1){
-            b.setAt(currentPos, null);
-            currentPos = b.nearestPosToTarget(currentPos, 3, player.id);
+            point prevPos = currentPos;
+            currentPos = b.pathfinder(currentPos, b.findPosOfItem(player), 3);
+            b.setAt(prevPos, null);
             b.setAt(currentPos, this);
             aP--;
         }
@@ -49,9 +50,12 @@ class enemy extends character {
                 damage = damage - player.def;
             else
                 damage = 0;
-
             player.hp = player.hp - damage;
             System.out.println("The zombie hits and deals " + damage + " damage");
+            if(player.hp<=0){
+                System.out.println("Game over");
+                System.exit(0);
+            }
         }
         else
             System.out.println("You block the enemy´s attack");

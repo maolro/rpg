@@ -28,14 +28,20 @@ public class board{
             }
         }
     }
+    public boardItem getAt(int x, int y){
+        return b[y][x];
+    }
     public boardItem getAt(point pointA){
-        return b[pointA.getX()][pointA.getY()];
+        return b[pointA.getY()][pointA.getX()];
     }
     public void setAt(point pointA, boardItem c) {
-        b[pointA.getX()][pointA.getY()] = c;
+        b[pointA.getY()][pointA.getX()] = c;
     }
-    public int getLength(){
+    public int getHeight(){
         return b.length;
+    }
+    public int getWidth(){
+        return b[0].length;
     }
 
     public void printBoard(){
@@ -74,8 +80,8 @@ public class board{
         boardItem nearestTarget = null;
         if(containsChar(id)){
             int nearestDistance = 100000;
-            for(int i=0;i<getLength();i++){
-                for(int j=0;j<getLength();j++) {
+            for(int i = 0; i< getHeight(); i++){
+                for(int j = 0; j< getHeight(); j++) {
                     point foundPos = new point(i,j);
                     if (((getAt(foundPos) == null && id == '.') ||
                             (getAt(foundPos) != null && getAt(foundPos).id  == id))
@@ -96,8 +102,8 @@ public class board{
         if(targetPos != null){
             point nearestPos = null;
             int nearestDistance = 100000;
-            for(int i=0;i<getLength();i++){
-                for(int j=0;j<getLength();j++) {
+            for(int i = 0; i< getHeight(); i++){
+                for(int j = 0; j< getHeight(); j++) {
                     point foundPos = new point(i,j);
                     if (currentPos.distanceTo(foundPos)<=range && getAt(foundPos) == null
                            && foundPos.distanceTo(targetPos)<nearestDistance){
@@ -114,7 +120,7 @@ public class board{
     point findPosOfItem(boardItem c){
         for(int i=0;i<b.length; i++){
             for(int j=0;j<b.length;j++){
-                if(b[i][j] == c){
+                if(b[j][i] == c){
                     return new point(i, j);
                 }
             }
@@ -144,8 +150,8 @@ public class board{
             y = _y;
         }
     }
-    point pathfinder(boardItem[][] board, point start, point goal, int range){
-        pathVertex[][] distanceBoard = new pathVertex[board.length][board[0].length];
+    point pathfinder(point start, point goal, int range){
+        pathVertex[][] distanceBoard = new pathVertex[b.length][b[0].length];
         for(int i=0;i<distanceBoard.length;i++) {
             for(int j=0;j<distanceBoard[0].length;j++) {
                 distanceBoard[i][j] = new pathVertex(i, j);
@@ -166,10 +172,12 @@ public class board{
             if(minFound==null)
                 break;
             minFound.visited = true;
-            for(int i=minFound.x-1;i<minFound.x+1;i++){
-                for(int j= minFound.y-1;j< minFound.y+1;j++){
-                    if(i>=0 && j>=0 && i< board.length && j< board[0].length && !distanceBoard[i][j].visited){
-                        double distanceTo = Math.sqrt(Math.abs(i- minFound.x)+Math.abs(j- minFound.y));
+            minFound.active = false;
+            for(int i=minFound.x-1;i<=minFound.x+1;i++){
+                for(int j= minFound.y-1;j<= minFound.y+1;j++){
+                    if(i>=0 && j>=0 && i< b.length && j< b[0].length && !distanceBoard[i][j].visited
+                            && (b[i][j] == null || (i==start.getX() && j== start.getY()))){
+                        double distanceTo = Math.sqrt(Math.abs(i- minFound.x)+Math.abs(j- minFound.y)) + minFound.distance;
                         if(distanceTo < distanceBoard[i][j].distance) {
                             distanceBoard[i][j].distance = distanceTo;
                             distanceBoard[i][j].previous = minFound;
@@ -180,10 +188,19 @@ public class board{
             }
         }
         pathVertex current = distanceBoard[start.getX()][start.getY()];
-        while(range >0 && (current.x != goal.getX() || current.y != goal.getY()) && current.previous!=null){
+        while(range >0 && current.previous!=null &&
+        (current.previous.x != goal.getX() || current.previous.y != goal.getY())){
             range--;
             current = current.previous;
         }
         return new point(current.x, current.y);
+    }
+    void printDistances(pathVertex[][] distanceBoard){
+        for(int i=0;i<distanceBoard.length;i++){
+            for(int j=0;j<distanceBoard[0].length;j++) {
+                System.out.print(distanceBoard[i][j].distance+" ");
+            }
+            System.out.println();
+        }
     }
 }

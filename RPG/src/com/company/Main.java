@@ -4,7 +4,7 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
-            char[][] r1 = {
+           char[][] r1 = {
                     {'+', '+', '+', '.', '.', '+', '+', '+', '+'},
                     {'+', '+', '.', '.', '.', '.', '+', '+', '+'},
                     {'+', '+', '.', '.', 'Z', '.', '+', '+', '+'},
@@ -17,7 +17,8 @@ public class Main {
             board b = new board(r1);
             List<boardItem> heroList = b.findItemsByID('P');
             hero h = (hero) heroList.get(0);
-            //game(b, h);
+            GUI g = new GUI(b);
+            /*game(b, h);
             char[][] r2 = {
                 {'+', '+', '+', '+', '+', '+', '+', '+', '+', '+'},
                 {'+', '+', '.', '+', '+', '.', '.', '+', '+', '+'},
@@ -28,7 +29,7 @@ public class Main {
                 {'+', '+', '.', '.', '.', '.', '.', '.', '.', '+'},
                 {'+', '+', '+', '.', '.', '.', '.', '.', '+', '+'},
                 {'+', '+', '+', '+', '+', '.', '.', '+', '+', '+'}};
-            newStage(r2, 8, 5, h);
+            newStage(r2, 8, 5, h);*/
 
     }
     public static void newStage(char[][] selBoard, int x, int y, hero startHero)
@@ -37,6 +38,7 @@ public class Main {
         point p = new point(x, y);
         b.setAt(p, startHero);
         startHero.b = b;
+        System.out.println("With all enemies defeated you advance to the next room");
         game(b, startHero);
     }
     public static void game(board b, hero h){
@@ -50,10 +52,6 @@ public class Main {
                 System.out.println("Enemy "+enemyList.indexOf(enemies)+ "'s turn");
                 e.enemyTurn();
             }
-        }
-        if(h.hp<=0){
-            System.out.println("Game over");
-            System.exit(0);
         }
     }
 }
